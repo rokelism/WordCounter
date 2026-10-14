@@ -1,0 +1,34 @@
+<resources>
+    <string name="app_name">WordCounter</string>
+
+    <!-- Teksto įvestis -->
+    <string name="input_label">Tekstas analizei</string>
+    <string name="input_placeholder">Įveskite arba įklijuokite tekstą čia…</string>
+    <string name="input_error_empty">Teksto laukas negali būti tuščias!</string>
+
+    <!-- Veiksmų mygtukai -->
+    <string name="button_calculate">Skaičiuoti</string>
+    <string name="button_generate_sample">Generuoti pavyzdį</string>
+
+    <!-- Rezultatų skiltis -->
+    <string name="results_title">Dabartiniai rezultatai</string>
+    <string name="label_sentences">Sakiniai</string>
+    <string name="label_words">Žodžiai</string>
+    <string name="label_characters">Rašybos ženklai</string>
+    <string name="label_numbers">Skaičiai</string>
+
+    <!-- Istorijos skiltis -->
+    <string name="history_title">Skaičiavimų istorija</string>
+    <string name="history_empty">Istorija tuščia. Įveskite tekstą ir paspauskite „Skaičiuoti“.</string>
+    <string name="history_item_text_label">Tekstas:</string>
+
+    <!-- Testavimo pavyzdžiai -->
+    <string-array name="test_samples">
+        <item>Labas rytas</item>
+        <item>Rugsėjo 1 prasidėjo karas. Liūdna</item>
+        <item>COVID-19 pandemijos metu temperatūra nukrito iki -5,5 laipsnių!</item>
+        <item>Prekė A4 kainuoja 3.14 euro... Ar tikrai?!</item>
+        <item>1-asis etapas: atlikti 3D modeliavimą.</item>
+        <item>Šiandien yra 2026 metai, kaina yra 2,5 euro.</item>
+    </string-array>
+</resources>

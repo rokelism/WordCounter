@@ -1,0 +1,33 @@
+*.iml
+.gradle
+/local.properties
+local.properties
+
+# Android Studio / IntelliJ
+.idea/
+
+# Kotlin compiler cache
+.kotlin/
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+/build
+build/
+**/build/
+captures/
+.externalNativeBuild
+.cxx
+
+# Signing and Keystore files
+*.jks
+*.keystore
+*.key
+*.pepk
+
+# Credentials and secrets
+secrets.properties
+credentials.json
+google-services.json
