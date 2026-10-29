@@ -1,49 +1,97 @@
 # WordCounter testavimas
 
-**Naujausias rezultatas (2026-10-29, 13:52): visi 10 instrumentinių testų (6 integraciniai UI scenarijai, 3 peržiūrų atvaizdavimo testai ir 1 numatytasis paketo testas) praėjo. 25/25 vienetų testai taip pat praėjo. Visa nefiltruota instrumentinė JaCoCo ataskaita: klasės 11/11 (100 %), metodai 84/84 (100 %), eilutės 430/437 (98.40 %), šakos 68/104 (65.38 %).** Tai 100 % klasių ir metodų padengimas instrumentinėje ataskaitoje; tai nėra 100 % eilučių / šakų ar 100 % visos programėlės JVM vienetų testų padengimas.
+**Naujausias rezultatas (2026-10-29, 14:41, Europe/Vilnius): 40/40 vietinių JVM vienetų testų praėjo Android Studio. Visa nefiltruota JVM JaCoCo ataskaita: 11/11 klasių (100 %), 84/84 metodų (100 %), 437/437 eilučių (100 %), 75/86 šakų (87,21 %), 3089/3108 instrukcijų (99,39 %).** Užduoties 100 % klasių ir metodų reikalavimas dabar įrodytas būtent JVM Unit ataskaitoje. Tai nėra teiginys apie 100 % šakų ar instrukcijų.
 
-## Vienetų testų rezultatai
+Ankstesni 10/10 instrumentinių testų taip pat praėjo 13:52 tame pačiame projekte su esamu emuliatoriumi. Jų rezultatai ir ataskaita toliau išsaugoti atskirai; jie nesujungti su JVM rezultatais ir nenaudoti JVM procentams gauti.
 
-2026 m. spalio 29 d. Android Studio aplinkoje įvykdyta užduotis `:app:createDebugUnitTestCoverageReport`. Visi 25 vienetų testai praėjo be klaidų ir praleistų testų.
+## Vietinių JVM vienetų testų rezultatai (14:41)
+
+Android Studio paleista išsaugota konfigūracija **WordCounter unit coverage**, vykdanti `:app:createDebugUnitTestCoverageReport` ir `:app:testDebugUnitTest`. Galutinis rezultatas: **BUILD SUCCESSFUL in 25s**, vykdymas baigtas 14:41:00; JUnit XML ir JaCoCo XML atnaujinti 14:40:59. Visi testai realiai vykdyti: testų užduotis nebuvo vien UP-TO-DATE. JUnit XML: **40 testų, 0 nepraėjusių, 0 klaidų, 0 praleistų**.
 
 | Testų klasė | Testai | Praėjo | Nepraėjo |
 | --- | ---: | ---: | ---: |
-| TextStatisticsCalculatorTest | 14 | 14 | 0 |
-| WordCounterViewModelTest | 11 | 11 | 0 |
-| Iš viso | 25 | 25 | 0 |
+| TextStatisticsCalculatorTest (esama) | 14 | 14 | 0 |
+| WordCounterViewModelTest (esama) | 11 | 11 | 0 |
+| WordCounterActivityLocalTest (nauja) | 7 | 7 | 0 |
+| WordCounterPreviewLocalTest (nauja) | 3 | 3 | 0 |
+| WordCounterThemeLocalTest (nauja) | 5 | 5 | 0 |
+| **Iš viso** | **40** | **40** | **0** |
 
-Papildomi testai tikrina vien skaičių turintį tekstą, kabutėmis ir skliaustais apgaubtus žodžius bei skaičius, brūkšnelių ir tuščių skliaustų apdorojimą, kitų simbolių ignoravimą bei skirtingus stabilius istorijos įrašų ID. Unikalūs ID reikalingi, kad pakartotinai skaičiuojant tą patį tekstą istorijos sąrašas turėtų skirtingus elementų raktus.
+Visos trys naujos klasės yra `app/src/test/java/com/example/wordcounter/`, o ne `src/androidTest`. Tai vietiniai JVM testai su Robolectric Android aplinka: jie turi integracinę apimtį (tikras MainActivity, Compose medis ir lifecycle), bet vykdomi Gradle Unit užduotyje be įrenginio / emuliatoriaus. Grynieji 25 Kotlin logikos / būsenos testai išlaikyti nepakeisti.
 
-## Išmatuotas kodo padengimas
+### Naujos JVM aplinkos paruošimas ir generavimo kilmė
 
-JaCoCo ataskaita apima visą programėlės kodą. Lentelėje atskirai pateiktos klasės, kurias patikrina JVM vienetų testai.
+- Projektas: `C:\Users\Rokas\AndroidStudioProjects\WordCounter`; ManualWordCounter nenaudotas. Prieš pakeitimus perskaitytas TESTING.md ir Git status; darbo medis buvo švarus, HEAD `83fa032cad5538d5c61e8af260596d439bb4dbd5`.
+- Testus ir pradinę testų konfigūraciją sugeneravo užduotyje įvardytas **Antigravity**, atskirame pokalbyje **Robolectric Unit Test Generation**, UI nurodytu modeliu **Gemini 3.8 Flash High**. Antigravity taip pat pataisė temos tipų importą, atskyrė dinaminių temų scenarijus ir pridėjo aiškias ribotos slinkimo paieškos klaidas.
+- Codex AI peržiūrėjo kodą, po tikro nepavykusio paleidimo sumažino Activity testų swipe žingsnį iki 30 % sąrašo aukščio ir aiškiai pritaikė `jacoco` Gradle papildinį, kad Robolectric klasių įkėlimui būtina agento konfigūracija nebūtų tyliai praleista. Dokumentacija parengta pagal tikrus XML. Rankinis kodo redagavimas Android Studio neatliktas; visi build / testų paleidimai atlikti Android Studio UI.
+- Windows x64; Android Studio 2026.1.4 (`AI-261.26222.65.2614.16204760`), Studio JBR Java 25.0.3; Gradle 9.6.0; AGP 9.4.1; Kotlin Compose plugin 2.2.10; Compose BOM 2026.02.01 / UI Test 1.10.4; JUnit 4.13.2; **Robolectric 4.17**, emuliuojamas Android API 34, `GraphicsMode.NATIVE`, `LooperMode.PAUSED`; JaCoCo **0.8.14**.
+- `unitTests.isIncludeAndroidResources = true` pateikia tikrus programėlės resursus ir manifestą. JVM `--add-opens` reikalingi Robolectric ir šiai JBR versijai. Pirmam aplinkos paruošimui reikalingas priklausomybių parsisiuntimas; Gradle sinchronizacija atlikta Android Studio. Žr. [Robolectric oficialias instrukcijas](https://robolectric.org/getting-started/).
+- Esamos Compose UI Test / AndroidX Test bibliotekos pridėtos ir į `testImplementation`; instrumentinių priklausomybių versijos nekeistos. JaCoCo agentui įjungtas `isIncludeNoLocationClasses = true`. Vienintelis agento `excludes` yra **`jdk.internal.*`** (JDK vidinės klasės); jis nepašalina jokio programėlės kodo ir nėra ataskaitos application-code filtras.
 
-| Klasė | Klasės | Funkcijos | Eilutės | Šakos |
+### Nauji scenarijai ir tikri rezultatai
+
+Septyni Activity scenarijai tikrina visus keturis matomus skaičiavimo rodiklius ir istoriją; tuščios / tarpų įvesties validaciją bei atsistatymą; visų šešių pavyzdžių ciklą be automatinio skaičiavimo; tikrą Activity atkūrimą su naujo objekto ir seno sunaikinimo patikra; ankstesnių rezultatų išlaikymą po klaidos; vienodų istorijos įrašų tvarką; gulsčią išdėstymą ir mygtukų veikimą. Laukiamos skaičiavimo reikšmės yra nepriklausomos konstantos, ne produkcinio analizatoriaus grąžinta reikšmė.
+
+Trys preview testai vykdo pačias esamas portretinę, gulsčią ir klaidos preview funkcijas, tikrina jų pažodines maketo reikšmes bei iš tikrųjų kviečia teksto keitimo ir abiejų mygtukų callback'us, patikrindami nepakitusią maketo būseną. Penki temos testai tikrina statines šviesią / tamsią temas ir tipografiją, dinaminių šviesios / tamsios temų primary, surface, background spalvas bei šešias spalvų ir tipografijos konstantas.
+
+| Naujas JVM testo vardas | Faktinis rezultatas | JUnit trukmė, s |
+| --- | --- | ---: |
+| `repeatedIdenticalCalculations_prependsNewHistoryEntryWithCorrectOrdering` | Praėjo | 11.534 |
+| `validCalculation_displaysAllFourStatisticsAndHistoryEntryWithHandCheckedValues` | Praėjo | 0.607 |
+| `generateSample_cyclesThroughSamplesWithWraparound_clearsValidationWithoutAutoCalculate` | Praėjo | 0.452 |
+| `landscapeLayout_rendersRowButtons_andPerformsValidCalculationAndSampleGeneration` | Praėjo | 0.455 |
+| `invalidInputAfterCalculation_preservesExistingResultsAndHistory` | Praėjo | 0.571 |
+| `activityRecreation_verifiesNewInstance_andPreservesInputResultsHistoryAndCyclePosition` | Praėjo | 1.048 |
+| `emptyAndWhitespaceValidation_showsErrorWithoutHistory_andRecoversUponValidInput` | Praėjo | 0.373 |
+| `portraitPreview_rendersLiteralFixtureSnapshot_andInvokesNoOpCallbacksWithoutMutatingState` | Praėjo | 0.279 |
+| `landscapePreview_rendersLiteralFixtureSnapshot_andInvokesNoOpCallbacksWithoutMutatingState` | Praėjo | 0.231 |
+| `errorPreview_rendersLiteralFixtureSnapshot_andInvokesNoOpCallbacksWithoutMutatingState` | Praėjo | 0.15 |
+| `theme_dynamicLight_appliesDynamicLightColorSchemeOnAndroidS` | Praėjo | 0.07 |
+| `theme_darkStatic_appliesDarkSchemeAndTypography` | Praėjo | 0.054 |
+| `theme_dynamicDark_appliesDynamicDarkColorSchemeOnAndroidS` | Praėjo | 0.098 |
+| `theme_lightStatic_appliesLightSchemeAndTypography` | Praėjo | 0.053 |
+| `colorTokensAndTypography_haveExpectedConstantValues` | Praėjo | 0.051 |
+
+Naudojama realių resursų eilučių ir stabilių semantinių žymeklių paieška su slinkimu ir matomumo patikromis. Fiksuotų sleep nėra. Activity atkūrimas atliekamas per `ActivityScenario.recreate()`; gulsčias atskiras testas naudoja `@Config(qualifiers = "w891dp-h411dp-land")`. Preview orientacijos pateikiamos per LocalConfiguration ir nevadinamos fiziniu pasukimu.
+
+**Paleidimų eiga pateikiama atvirai:** 14:37 pirmas paleidimas baigėsi 39/40, nes didelis swipe žingsnis praleido matomą rodiklį vienodų skaičiavimų teste. Sumažinus žingsnį 14:38 praėjo 40/40, tačiau ataskaita dar rodė 5/11 ir 25/84: Robolectric klasių vykdymo agento parinktys nebuvo pritaikytos. Pridėtas aiškus `jacoco` papildinys ir privaloma `JacocoTaskExtension` konfigūracija vietoj tylaus `findByType()?.apply`. Tik galutinis 14:41 paleidimas patvirtino ir 40/40 testų, ir pilną klasių / metodų padengimą. Ankstesni failai ar vien testų sėkmė nebuvo palaikyti padengimo įrodymu.
+
+## Visa nefiltruota JVM Unit JaCoCo ataskaita (14:41)
+
+| Apimtis | Klasės | Metodai | Eilutės | Šakos | Instrukcijos |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| **Visa debug programėlė, tik vietiniai JVM Unit testai** | **11/11 (100 %)** | **84/84 (100 %)** | **437/437 (100 %)** | **75/86 (87,21 %)** | **3089/3108 (99,39 %)** |
+
+| Klasė JVM ataskaitoje | Klasės | Metodai | Eilutės | Šakos |
 | --- | ---: | ---: | ---: | ---: |
-| TextStatisticsCalculator | 1/1 | 3/3 | 52/52 | 38/38 |
-| TextStatistics | 1/1 | 5/5 | 5/5 | Nėra |
-| WordCounterViewModel | 1/1 | 5/5 | 33/33 | 4/4 |
 | WordCounterUiState | 1/1 | 7/7 | 7/7 | Nėra |
+| WordCounterScreenKt | 1/1 | 20/20 | 205/205 | 21/26 |
+| ComposableSingletons$WordCounterScreenKt | 1/1 | 23/23 | 89/89 | Nėra |
+| WordCounterViewModel | 1/1 | 5/5 | 33/33 | 4/4 |
 | CalculationHistoryItem | 1/1 | 5/5 | 5/5 | Nėra |
-| Šių penkių klasių suma | 5/5 | 25/25 | 102/102 | 42/42 |
+| TextStatistics | 1/1 | 5/5 | 5/5 | Nėra |
+| TextStatisticsCalculator | 1/1 | 3/3 | 52/52 | 38/38 |
+| ThemeKt | 1/1 | 2/2 | 23/23 | 12/18 |
+| TypeKt | 1/1 | 2/2 | 7/7 | Nėra |
+| ColorKt | 1/1 | 7/7 | 6/6 | Nėra |
+| MainActivity | 1/1 | 5/5 | 10/10 | Nėra |
 
-Šių penkių logikos ir duomenų klasių padengimas yra 100 %. Ataskaitos funkcijų skaičius apima jos skaičiuojamus konstruktorius, savybių skaitymo funkcijas ir statinį inicijavimą.
+Neįvykdytų JaCoCo skaičiuojamų metodų sąrašas tuščias. Įtraukti MainActivity, Compose ekranas, ComposableSingletons, visos trys preview funkcijos, temos / spalvų / tipografijos kodas ir visos logikos / duomenų klasės. Konstruktoriai, savybių skaitymo funkcijos, statinis inicijavimas ir Compose generuoti metodai skaičiuojami taip, kaip juos pateikia JaCoCo.
 
-**Istorinis rezultatas prieš UI etapą (12:41): visos programėlės 100 % padengimas dar nebuvo pasiektas.** Tuometinės visos ataskaitos rezultatai: klasės 5/11 (45,45 %), funkcijos 25/84 (29,76 %), eilutės 102/430 (23,72 %), šakos 42/104 (40,38 %). Čia įtraukti MainActivity, Compose ekranas, peržiūros, temos kodas ir kompiliatoriaus generuojamos Compose funkcijos. Jų neišskyrėme iš ataskaitos. Ekrano veikimui patikrinti reikia Android įrenginyje ar emuliatoriuje vykdomų testų.
+Programėlės kodas nepaslėptas ir nepašalintas iš ataskaitos. Klasių / metodų / eilučių vardikliai liko **11 / 84 / 437**. Šios JVM ataskaitos šakų vardiklis yra **86**, ankstesnės atskiros instrumentinės ataskaitos – **104** (WordCounterScreenKt: 26 JVM ir 44 instrumentinės šakos); instrukcijų vardikliai atitinkamai 3108 ir 3155. Pateikiami tikri kiekvienos ataskaitos skaitikliai, jų nesutapatiname ir nesudedame. Naujų application-code filtrų ar pasirinktų klasių ataskaitos nepridėta; liko standartinė AGP visa debug ataskaita. Visi **14 prieš šį etapą buvusių Kotlin failų** (programėlė, esami JVM ir instrumentiniai testai) SHA-256 palyginime nepakito.
 
-## Pakartotinis paleidimas Android Studio
+Lieka **11 nepadengtų šakų**: 5 WordCounterScreenKt ir 6 ThemeKt; 19 nepadengtų instrukcijų. Todėl nereikalaujamas 100 % šakų / instrukcijų padengimas nepasiektas ir nevaizduojamas kaip pasiektas. Tai neužkerta kelio atskirai išmatuotam 100 % klasių / metodų ir eilučių rezultatui.
 
-1. Atidaryti WordCounter projektą.
-2. Jei siūloma, atlikti Gradle sinchronizaciją.
-3. Per Find Action (`Ctrl+Shift+A`) pasirinkti `Execute Gradle Task`.
-4. Vykdyti `gradle :app:createDebugUnitTestCoverageReport`.
-5. Patikrinti sėkmingą vykdymą ir atidaryti `app/build/reports/coverage/test/debug/index.html`.
+## JVM rezultatų pakartojimas Android Studio
 
-Projekte taip pat išsaugota bendra Gradle paleidimo konfigūracija `WordCounter unit coverage`.
+1. Atidaryti šį WordCounter projektą, atlikti Gradle sinchronizaciją, jei siūloma.
+2. Pasirinkti bendrą Gradle konfigūraciją **WordCounter unit coverage** iš `.run/WordCounter unit coverage.run.xml` ir Run (`Shift+F10`). Ji vykdo `:app:createDebugUnitTestCoverageReport`; emuliatorius šiam paleidimui nereikalingas.
+3. Patikrinti 40 testų, 0 failures / errors / skipped ir BUILD SUCCESSFUL. Jei reikia naujo vykdymo su nepakeistu kodu, Android Studio Execute Gradle Task galima tai pačiai užduočiai pridėti `--rerun-tasks`.
+4. Testų HTML: `app/build/reports/tests/testDebugUnitTest/index.html`; pirminiai JUnit XML: `app/build/test-results/testDebugUnitTest/TEST-*.xml`.
+5. Visos JVM aprėpties HTML: `app/build/reports/coverage/test/debug/index.html`; XML: `app/build/reports/coverage/test/debug/report.xml`; vykdymo duomenys: `app/build/outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec`.
+6. Tikrinti pilnos ataskaitos 11 klasių / 84 metodų vardiklius ir atskirus MainActivity, UI, preview bei temos įrašus. Ši ataskaita naudoja tik JVM `.exec`; emuliatoriaus `.ec` neįtrauktas.
 
-Pirminiai rezultatai: `app/build/test-results/testDebugUnitTest/TEST-*.xml`. Padengimo duomenys: `app/build/reports/coverage/test/debug/report.xml`.
-
-Debug variante įjungti `enableUnitTestCoverage` ir `enableAndroidTestCoverage`, kaip aprašyta [oficialioje Android dokumentacijoje](https://developer.android.com/studio/test/coverage-report). Antroji parinktis paruošia instrumentinių testų padengimo matavimą; ji nereiškia, kad UI testai jau įvykdyti.
+Istorinis JVM rezultatas prieš papildomus Robolectric testus buvo 25/25 testai, 5/11 klasių ir 25/84 metodų; penkių logikos / duomenų klasių 102/102 eilutės ir 42/42 šakos. Ši ankstesnė spraga dabar uždaryta būtent vietiniais Unit testais. Toliau išsaugoti atskiro ankstesnio instrumentinio etapo rezultatai.
 
 ## UI / integracinių testų aplinka ir generavimas
 
@@ -89,14 +137,14 @@ Numatytasis `ExampleInstrumentedTest.useAppContext` paliktas nepakeistas ir taip
 - Pirmi paleidimai buvo nesėkmingi arba nutraukti: pataisytas API importas, miegantis / užrakintas emuliatorius ir netinkamas sujungto medžio mygtuko tikrinimas. Vėliau live thread diagnostika parodė Compose framework laukimą `waitForNextChoreographerFrame`, kai programėlė jau buvo idle. Pakartotinai paleistas Android tame pačiame esamame AVD. Po šio paleidimo visi šeši scenarijai baigėsi sėkmingai. Ankstesni nepavykę / nutraukti bandymai nelaikomi praėjusiais.
 - ADB / Java debug ryšys naudotas tik emuliatoriaus diagnostikai ir Android perkrovimui. Galutiniai build ir testų paleidimai atlikti Android Studio per išsaugotas Gradle konfigūracijas.
 
-## Naujausias išmatuotas padengimas
+## Instrumentinio etapo padengimas ir istorinis JVM palyginimas (13:52)
 
 Ataskaitos pateikiamos **atskirai**, jos nesujungtos. Procentai tarp ataskaitų nesudedami. Visas aplikacijos kodas, įskaitant MainActivity, Compose UI, temas ir previews, liko ataskaitų įvestyje; jokių naujų application-code exclude filtrų nepridėta. JaCoCo metodų skaitiklis apima jo skaičiuojamus konstruktorius, skaitymo funkcijas, statinį inicijavimą ir Compose generuotus metodus.
 
 | Visa debug programėlė, ataskaitos apimtis | Klasės | Metodai | Eilutės | Šakos |
 | --- | ---: | ---: | ---: | ---: |
 | Instrumentiniai testai, 13:52 | **11/11 (100 %)** | **84/84 (100 %)** | **430/437 (98.40 %)** | **68/104 (65.38 %)** |
-| Pakartotiniai JVM vienetų testai, 13:48 | 5/11 (45.45 %) | 25/84 (29.76 %) | 102/437 (23.34 %) | 42/104 (40.38 %) |
+| Istoriniai JVM vienetų testai, 13:48 (iki Robolectric etapo) | 5/11 (45.45 %) | 25/84 (29.76 %) | 102/437 (23.34 %) | 42/104 (40.38 %) |
 | Tik penkios logikos / duomenų klasės, JVM ataskaitos dalis | 5/5 (100 %) | 25/25 (100 %) | 102/102 (100 %) | 42/42 (100 %) |
 
 Instrumentinių testų instrukcijų padengimas: 3099/3155 (98.23 %). Nuo ankstesnės 430 eilučių ataskaitos bendras eilučių skaičius padidėjo iki 437 dėl UI semantinių žymeklių; apimtis nesumažinta.
@@ -157,12 +205,12 @@ Kad būtų patikrintos ir vykdomos preview lambdos, testai iš tikrųjų keičia
 
 Galutinio paleidimo suma: **9 prasmingi UI / atvaizdavimo testai + 1 numatytasis paketo testas = 10/10 praėjo**. Pagrindinių šešių trukmė 62.766 s, papildomų trijų 23.964 s, kartu 86.730 s. Galutinis build baigėsi 13:52:36 su `BUILD SUCCESSFUL in 1m 35s`. 25/25 vienetų testų regresija atlikta 13:48:13–13:48:14 ir praėjo be klaidų ar praleistų testų.
 
-Neįrodyta: 100 % eilučių / šakų, būsena žuvus procesui, fizinis įrenginio pasukimas ar 100 % visos programėlės padengimas vien JVM unit testais. Šie rezultatai nepateikiami kaip įvykdyti.
+Šiame istoriniame instrumentiniame etape nebuvo įrodyta 100 % eilučių / šakų ar 100 % JVM padengimo. Vėlesnis 14:41 JVM etapas aprašytas dokumento pradžioje. Proceso žūtis ir fizinis įrenginio pasukimas netikrinti; reikalaujamą atkūrimo alternatyvą tikrina tikras ActivityScenario.recreate().
 
 ## Pateikimo būsena ir likę reikalavimai
 
-- Mažiausiai keturi nepriklausomi UI / integraciniai scenarijai sugeneruoti ir praktiškai įvykdyti: **įvykdyta, 6/6**. Tikras Activity atkūrimas patikrintas.
-- Penkių logikos / duomenų klasių JVM padengimas: **100 %**. Visos programėlės nefiltruotos instrumentinės ataskaitos klasės ir metodai: **100 % (11/11 ir 84/84)**. JVM vienetų testų visos programėlės ataskaita atskirai tebėra 5/11 klasių ir 25/84 metodų. Jei kurse reikalaujama 100 % būtent JVM unit ataskaitoje, instrumentinis rezultatas to nepakeičia ir ši interpretacija turi būti suderinta.
-- Pirminiam generavimui panaudotas užduotyje įvardytas **Antigravity**. Codex pataisymai nurodyti atvirai; mišraus įrankių naudojimo priimtinumui nėra atskiro dėstytojo patvirtinimo. Metodų padengimo spraga instrumentinėje ataskaitoje uždaryta; galutinio pateikimo workflow dar priklauso nuo kurso įrankių / unit aprėpties reikalavimų ir atskiros Git sesijos.
-- **GitHub commit ir push šioje sesijoje neatlikti**; jie palikti užduoties vėlesnei atskirai AI sesijai. Esami uncommitted pakeitimai išsaugoti.
-
+- Mažiausiai keturi nepriklausomi UI / integraciniai scenarijai: **įvykdyta, šeši scenarijai praėjo esamame emuliatoriuje**, papildomai trys preview testai ir paliktas numatytasis paketo testas. Paketo testas neskaičiuojamas kaip vienas iš reikalaujamų scenarijų.
+- **100 % visos programėlės klasių ir metodų būtent JVM Unit ataskaitoje: įvykdyta, 11/11 ir 84/84; 40/40 testų praėjo.** Instrumentinė ataskaita šiam įrodymui nenaudota. Padengimo reikalavimas nebelaikomas interpretacijos ar derinimo klausimu.
+- Užduotyje nurodytas **Antigravity panaudotas pirminiam abiejų etapų testų generavimui**. Antigravity ir Codex indėlis nurodytas tiksliai. Atskiro dėstytojo patvirtinimo, kad leidžiami ir vėlesni Codex AI pataisymai, neturime; jei kurso tvarka reikalauja išskirtinai vieno įrankio visiems žingsniams, šio workflow priimtinumo nevadiname patvirtintu.
+- Šio JVM papildymo **commit / push neatlikti**: HEAD išliko `83fa032cad5538d5c61e8af260596d439bb4dbd5`. Dabartiniai nauji testai, testų konfigūracija ir dokumentacija palikti peržiūrėti ir išsiųsti vėlesnėje atskiroje AI Git sesijoje.
+- Galutinis pateikimas universiteto / kurso sistemoje šiame darbe neatliktas. 100 % šakų / instrukcijų, fizinis pasukimas ir proceso žūtis neteigiami kaip patikrinti; Activity atkūrimo reikalavimo alternatyva įvykdyta.

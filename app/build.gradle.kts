@@ -1,4 +1,7 @@
+import org.gradle.testing.jacoco.plugins.JacocoTaskExtension
+
 plugins {
+    jacoco
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
 }
@@ -37,6 +40,32 @@ android {
     buildFeatures {
         compose = true
     }
+
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+            all { testTask ->
+                testTask.jvmArgs(
+                    "--add-opens=java.base/java.lang=ALL-UNNAMED",
+                    "--add-opens=java.base/java.util=ALL-UNNAMED",
+                    "--add-opens=java.base/java.io=ALL-UNNAMED",
+                    "--add-opens=java.base/java.net=ALL-UNNAMED",
+                    "--add-opens=java.base/java.security=ALL-UNNAMED",
+                    "--add-opens=java.base/java.text=ALL-UNNAMED",
+                    "--add-opens=java.base/jdk.internal.access=ALL-UNNAMED",
+                    "--add-opens=java.desktop/java.awt.font=ALL-UNNAMED",
+                    "--add-opens=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED"
+                )
+            }
+        }
+    }
+}
+
+tasks.withType<Test>().configureEach {
+    extensions.configure<JacocoTaskExtension> {
+        isIncludeNoLocationClasses = true
+        excludes = listOf("jdk.internal.*")
+    }
 }
 
 dependencies {
@@ -49,6 +78,11 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     testImplementation(libs.junit)
+    testImplementation(libs.robolectric)
+    testImplementation(platform(libs.androidx.compose.bom))
+    testImplementation(libs.androidx.compose.ui.test.junit4)
+    testImplementation(libs.androidx.junit)
+    testImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     androidTestImplementation(libs.androidx.espresso.core)

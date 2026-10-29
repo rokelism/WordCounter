@@ -1,10 +1,10 @@
 # WordCounter – Teksto analizės Android programėlė
 
 **Praktinis darbas 6 (Testavimas) – atnaujinimas 2026-10-29:**
-- **25/25 JVM vienetų testų praėjo**: 14 `TextStatisticsCalculatorTest` ir 11 `WordCounterViewModelTest`. Penkių logikos ir duomenų klasių padengimas yra 100 % (102/102 eilučių, 42/42 šakų). Atskira visos programėlės JVM ataskaita apima 5/11 klasių (45,45 %) ir 25/84 metodų (29,76 %).
+- **40/40 JVM vienetų testų praėjo Android Studio (14:41)**: 25 esami logikos / būsenos testai ir 15 naujų Robolectric Activity, Compose preview bei temos testų. Visa nefiltruota JVM ataskaita: **11/11 klasių (100 %), 84/84 metodų (100 %), 437/437 eilučių (100 %)**, 75/86 šakų (87,21 %), 3089/3108 instrukcijų (99,39 %). Tai atskiras vietinių JVM Unit testų rezultatas, be instrumentinių duomenų sujungimo.
 - **10/10 instrumentinių testų praėjo Android Studio aplinkoje**: 6 prasmingi Compose UI integraciniai scenarijai (`WordCounterComposeTest`), 3 peržiūrų atvaizdavimo testai (`WordCounterPreviewRenderTest`) ir 1 numatytasis paketo testas (`ExampleInstrumentedTest`).
 - **Nefiltruota instrumentinė JaCoCo aprėptis**: 11/11 klasių (100 %), 84/84 metodų (100 %), 430/437 eilučių (98,40 %), 68/104 šakų (65,38 %). Šis rezultatas yra instrumentinių testų, o ne 100 % JVM vienetų testų padengimas.
-- Kursinis įrankių eigos ir padengimo interpretacijos priimtinumas lieka nepatvirtintas.
+- Testų generavimui naudotas užduotyje nurodytas Antigravity; vėlesni Codex AI pataisymai atvirai aprašyti TESTING.md. 100 % klasių / metodų JVM reikalavimas įvykdytas. Šio JVM papildymo commit / push ir galutinis pateikimas dar neatlikti.
 - Išsamūs testų protokolai, išmatuoti rodikliai, aplinkos duomenys ir paleidimo instrukcijos pateikti [TESTING.md](TESTING.md). Toliau dokumentacijoje išsaugotas pirminis programėlės kūrimo etapo aprašymas.
 
 „WordCounter“ – tai Android operacinei sistemai skirta programėlė, sukurta su **Kotlin** ir šiuolaikine deklaratyvia **Jetpack Compose** (Material 3) naudotojo sąsaja. Programėlė atlieka detalią vartotojo įvesto teksto analizę ir realiuoju laiku suskaičiuoja keturis pagrindinius rodiklius: sakinius, žodžius, visus rašybos ženklus bei skaičius.
@@ -226,7 +226,7 @@ app/src/
 
 ## Automatinių testų paleidimas Android Studio
 
-Projekte realizuoti 20 automatinių vienetų testų, padengiančių visas skaičiavimo taisykles, ribinius atvejus ir vartotojo sąsajos logiką.
+Pradiniame kūrimo etape buvo 20 vienetų testų (istorinis sąrašas toliau). Praktinio darbo 6 galutinis vietinių JVM testų rinkinys turi 40 testų; dabartiniai scenarijai ir rezultatai pateikti TESTING.md.
 
 ### Testų paleidimo būdai:
 
@@ -276,7 +276,7 @@ Projekte realizuoti 20 automatinių vienetų testų, padengiančių visas skaič
 ## Patikrinimo būsena
 
 ### Praktinis darbas 6 (Testavimas ir kodo padengimas)
-- **JVM vienetų testai**: 25/25 testai praėjo be klaidų (`TextStatisticsCalculatorTest` – 14, `WordCounterViewModelTest` – 11). Penkių logikos ir duomenų klasių padengimas siekia 100 % (102/102 eilučių, 42/42 šakų). Atskira visos programėlės JVM ataskaita apima 5/11 klasių (45,45 %) ir 25/84 metodų (29,76 %).
+- **JVM vienetų testai**: 40/40 praėjo: esami 14 analizatoriaus ir 11 ViewModel testų bei nauji 7 Activity, 3 preview ir 5 temos / konstantų testai. Visa nefiltruota JVM Unit ataskaita: **11/11 klasių, 84/84 metodų ir 437/437 eilučių (100 %)**, 75/86 šakų (87,21 %), 3089/3108 instrukcijų (99,39 %).
 - **Compose UI ir instrumentiniai testai**: visi 10/10 testų sėkmingai praėjo Android Studio aplinkoje (`Small Desktop API 34` emuliatoriuje):
   - 6 integraciniai UI scenarijai [`WordCounterComposeTest`](app/src/androidTest/java/com/example/wordcounter/WordCounterComposeTest.kt) (teisingi skaičiavimai, tuščia/tarpų validacija ir atsistatymas, pavyzdžių ciklas ir apgaubimas be automatinio skaičiavimo, tikras Activity atkūrimas su tapatybės patikra ir būsenos išlaikymu, klaidos po ankstesnio skaičiavimo bei pasikartojantys skaičiavimai);
   - 3 peržiūrų atvaizdavimo testai [`WordCounterPreviewRenderTest`](app/src/androidTest/java/com/example/wordcounter/WordCounterPreviewRenderTest.kt) su imituota išdėstymo konfigūracija (portretas, landscape, klaida), padengiantys visas peržiūrų composables ir no-op atgalinio ryšio lambdas;
@@ -287,7 +287,7 @@ Projekte realizuoti 20 automatinių vienetų testų, padengiančių visas skaič
   - Eilutės: **430/437 (98,40 %)**
   - Šakos: **68/104 (65,38 %)**
   - Instrukcijos: **3099/3155 (98,23 %)**
-  - *Pastaba*: Šis 100 % klasių ir metodų rezultatas pasiektas pilnoje instrumentinėje ataskaitoje; tai nėra 100 % eilučių / šakų ar 100 % visos programėlės JVM vienetų testų padengimas. Kursinis įrankių eigos ir padengimo interpretacijos priimtinumas lieka nepatvirtintas.
+  - *Pastaba*: Šis 100 % klasių ir metodų rezultatas pasiektas pilnoje instrumentinėje ataskaitoje; tai nėra 100 % eilučių / šakų ar 100 % visos programėlės JVM vienetų testų padengimas. Atskiras vėlesnis JVM paleidimas taip pat pasiekė 100 % klasių / metodų padengimą; žr. TESTING.md. Antigravity generavimas ir Codex AI pataisymai nurodyti atvirai.
 - Išsamus testavimo žurnalas, paleidimo instrukcijos ir ataskaitų duomenys pateikti [TESTING.md](TESTING.md).
 
 ### Pradinis programėlės kūrimo etapo patikrinimas (istorinis kontekstas)
