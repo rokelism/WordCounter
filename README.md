@@ -1,5 +1,12 @@
 # WordCounter – Teksto analizės Android programėlė
 
+**Praktinis darbas 6 (Testavimas) – atnaujinimas 2026-10-29:**
+- **25/25 JVM vienetų testų praėjo**: 14 `TextStatisticsCalculatorTest` ir 11 `WordCounterViewModelTest`. Penkių logikos ir duomenų klasių padengimas yra 100 % (102/102 eilučių, 42/42 šakų). Atskira visos programėlės JVM ataskaita apima 5/11 klasių (45,45 %) ir 25/84 metodų (29,76 %).
+- **10/10 instrumentinių testų praėjo Android Studio aplinkoje**: 6 prasmingi Compose UI integraciniai scenarijai (`WordCounterComposeTest`), 3 peržiūrų atvaizdavimo testai (`WordCounterPreviewRenderTest`) ir 1 numatytasis paketo testas (`ExampleInstrumentedTest`).
+- **Nefiltruota instrumentinė JaCoCo aprėptis**: 11/11 klasių (100 %), 84/84 metodų (100 %), 430/437 eilučių (98,40 %), 68/104 šakų (65,38 %). Šis rezultatas yra instrumentinių testų, o ne 100 % JVM vienetų testų padengimas.
+- Kursinis įrankių eigos ir padengimo interpretacijos priimtinumas lieka nepatvirtintas.
+- Išsamūs testų protokolai, išmatuoti rodikliai, aplinkos duomenys ir paleidimo instrukcijos pateikti [TESTING.md](TESTING.md). Toliau dokumentacijoje išsaugotas pirminis programėlės kūrimo etapo aprašymas.
+
 „WordCounter“ – tai Android operacinei sistemai skirta programėlė, sukurta su **Kotlin** ir šiuolaikine deklaratyvia **Jetpack Compose** (Material 3) naudotojo sąsaja. Programėlė atlieka detalią vartotojo įvesto teksto analizę ir realiuoju laiku suskaičiuoja keturis pagrindinius rodiklius: sakinius, žodžius, visus rašybos ženklus bei skaičius.
 
 Ši dokumentacija parengta pagal praktikos darbo reikalavimus ir aprašo faktiškai įgyvendintą programėlės funkcionalumą, skaičiavimo taisykles, architektūrą bei automatinių testų vykdymą.
@@ -268,10 +275,24 @@ Projekte realizuoti 20 automatinių vienetų testų, padengiančių visas skaič
 
 ## Patikrinimo būsena
 
-- **Automatiniai vienetų testai**: „Android Studio“ aplinkoje paleisti visi **20 vienetų testų** (`TextStatisticsCalculatorTest` ir `WordCounterViewModelTest`), ir visi **20 testų sėkmingai praėjo** (100 % pass rate).
-- **Rankinis patikrinimas**: pagrindinės programėlės funkcijos – teksto įvedimas, skaičiavimas, keturių rodiklių atvaizdavimas, tuščios įvesties klaidos būsenos atsiradimas ir išnykimas, testinių pavyzdžių ciklinis generavimas bei skaičiavimų istorijos kaupimas – buvo patikrintos rankiniu būdu **Android Studio aplinkoje, naudojant „Small Desktop API 34“ emuliatorių**.
-- **Svarbios pastabos ir dar nepatvirtinti scenarijai**:
-  - **Netestuota fiziniame telefone**: rankinis patikrinimas atliktas tik Android Studio emuliatoriuje („Small Desktop API 34“) su kompiuterio klaviatūros įvestimi; programėlė **nebuvo** testuota fiziniame išmaniajame telefone.
-  - **Horizontalus (landscape) išdėstymas**: veikimas pasukus ekraną realiame mobiliajame įrenginyje dar nėra galutinai patvirtintas.
-  - **Ekraninė klaviatūra**: programėlės elgsena, elementų matomumas ir slinkimas su atidaryta programine ekranine klaviatūra (IME / virtualia klaviatūra) dar nėra patvirtinti.
-  - Nors kode numatyti adaptyvūs išdėstymo sprendimai (`imePadding()`, prisitaikantys įvesties laukelio ir mygtukų parametrai), realiomis mobiliojo telefono sąlygomis jie dar nėra patikrinti ir nelaikomi patvirtintais.
+### Praktinis darbas 6 (Testavimas ir kodo padengimas)
+- **JVM vienetų testai**: 25/25 testai praėjo be klaidų (`TextStatisticsCalculatorTest` – 14, `WordCounterViewModelTest` – 11). Penkių logikos ir duomenų klasių padengimas siekia 100 % (102/102 eilučių, 42/42 šakų). Atskira visos programėlės JVM ataskaita apima 5/11 klasių (45,45 %) ir 25/84 metodų (29,76 %).
+- **Compose UI ir instrumentiniai testai**: visi 10/10 testų sėkmingai praėjo Android Studio aplinkoje (`Small Desktop API 34` emuliatoriuje):
+  - 6 integraciniai UI scenarijai [`WordCounterComposeTest`](app/src/androidTest/java/com/example/wordcounter/WordCounterComposeTest.kt) (teisingi skaičiavimai, tuščia/tarpų validacija ir atsistatymas, pavyzdžių ciklas ir apgaubimas be automatinio skaičiavimo, tikras Activity atkūrimas su tapatybės patikra ir būsenos išlaikymu, klaidos po ankstesnio skaičiavimo bei pasikartojantys skaičiavimai);
+  - 3 peržiūrų atvaizdavimo testai [`WordCounterPreviewRenderTest`](app/src/androidTest/java/com/example/wordcounter/WordCounterPreviewRenderTest.kt) su imituota išdėstymo konfigūracija (portretas, landscape, klaida), padengiantys visas peržiūrų composables ir no-op atgalinio ryšio lambdas;
+  - 1 numatytasis paketo pavadinimo testas [`ExampleInstrumentedTest`](app/src/androidTest/java/com/example/wordcounter/ExampleInstrumentedTest.kt).
+- **Išmatuotas JaCoCo kodo padengimas (nefiltruotas instrumentinis)**:
+  - Klasės: **11/11 (100 %)**
+  - Metodai: **84/84 (100 %)**
+  - Eilutės: **430/437 (98,40 %)**
+  - Šakos: **68/104 (65,38 %)**
+  - Instrukcijos: **3099/3155 (98,23 %)**
+  - *Pastaba*: Šis 100 % klasių ir metodų rezultatas pasiektas pilnoje instrumentinėje ataskaitoje; tai nėra 100 % eilučių / šakų ar 100 % visos programėlės JVM vienetų testų padengimas. Kursinis įrankių eigos ir padengimo interpretacijos priimtinumas lieka nepatvirtintas.
+- Išsamus testavimo žurnalas, paleidimo instrukcijos ir ataskaitų duomenys pateikti [TESTING.md](TESTING.md).
+
+### Pradinis programėlės kūrimo etapo patikrinimas (istorinis kontekstas)
+- **Pradiniai vienetų testai**: pirminiame etape buvo sukurti 20 vienetų testų (`TextStatisticsCalculatorTest` ir `WordCounterViewModelTest`), kurie visi sėkmingai praėjo. Vėliau Praktinio darbo 6 metu jie buvo išplėsti iki 25 testų.
+- **Rankinis patikrinimas**: pagrindinės programėlės funkcijos – teksto įvedimas, skaičiavimas, keturių rodiklių atvaizdavimas, tuščios įvesties klaidos būsenos atsiradimas ir išnykimas, testinių pavyzdžių ciklinis generavimas bei skaičiavimų istorijos kaupimas – buvo patikrintos rankiniu būdu Android Studio aplinkoje, naudojant „Small Desktop API 34“ emuliatorių.
+- **Svarbios pastabos**:
+  - **Netestuota fiziniame telefone**: rankinis ir automatinis patikrinimas atliktas Android Studio emuliatoriuje („Small Desktop API 34“); programėlė nebuvo testuota fiziniame išmaniajame telefone.
+  - **Ekraninė klaviatūra**: programinės klaviatūros valdymas automatiniuose UI testuose atliekamas per tiesiogines Android API (`WindowInsetsControllerCompat`).

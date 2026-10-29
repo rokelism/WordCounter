@@ -4,6 +4,7 @@ import com.example.wordcounter.ui.WordCounterViewModel
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -19,6 +20,22 @@ class WordCounterViewModelTest {
     @Before
     fun setUp() {
         viewModel = WordCounterViewModel()
+    }
+
+    @Test
+    fun repeatedCalculations_haveDistinctStableHistoryIds() {
+        viewModel.onInputTextChanged("Tas pats tekstas")
+        viewModel.onCalculateClicked()
+        val firstId = viewModel.uiState.value.history.single().id
+
+        viewModel.onCalculateClicked()
+        val history = viewModel.uiState.value.history
+
+        assertEquals(2, history.size)
+        assertTrue(firstId.isNotBlank())
+        assertTrue(history.first().id.isNotBlank())
+        assertNotEquals(firstId, history.first().id)
+        assertEquals(firstId, history.last().id)
     }
 
     @Test

@@ -10,6 +10,51 @@ import org.junit.Test
 class TextStatisticsCalculatorTest {
 
     @Test
+    fun numbersOnly_areCountedAsOneSentenceWithoutWords() {
+        val input = "42 -7 3.14 2,5"
+        val stats = TextStatisticsCalculator.calculate(input)
+
+        assertEquals(1, stats.sentenceCount)
+        assertEquals(0, stats.wordCount)
+        assertEquals(4, stats.numberCount)
+        assertEquals(input.length, stats.characterCount)
+    }
+
+    @Test
+    fun surroundingQuotesBracketsAndHyphens_preserveWordsAndNumbers() {
+        val input = "„Labas“ (42) [2,5] {žodis} --tekstas--"
+        val stats = TextStatisticsCalculator.calculate(input)
+
+        assertEquals(1, stats.sentenceCount)
+        assertEquals(3, stats.wordCount)
+        assertEquals(2, stats.numberCount)
+        assertEquals(input.length, stats.characterCount)
+    }
+
+    @Test
+    fun singleHyphenAndEmptyBrackets_doNotCreateWordsOrSentences() {
+        for (input in listOf("-", "()", "[]", "{}", "---")) {
+            val stats = TextStatisticsCalculator.calculate(input)
+
+            assertEquals(input, 0, stats.sentenceCount)
+            assertEquals(input, 0, stats.wordCount)
+            assertEquals(input, 0, stats.numberCount)
+            assertEquals(input, input.length, stats.characterCount)
+        }
+    }
+
+    @Test
+    fun unsupportedSymbols_areIgnoredWithoutLosingAdjacentValidTokens() {
+        val input = "@ # % Labas 42"
+        val stats = TextStatisticsCalculator.calculate(input)
+
+        assertEquals(1, stats.sentenceCount)
+        assertEquals(1, stats.wordCount)
+        assertEquals(1, stats.numberCount)
+        assertEquals(input.length, stats.characterCount)
+    }
+
+    @Test
     fun testExample1_LabasRytas() {
         val input = "Labas rytas"
         val stats = TextStatisticsCalculator.calculate(input)

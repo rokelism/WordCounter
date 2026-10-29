@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ElevatedCard
@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,6 +38,16 @@ import androidx.compose.ui.unit.dp
 import com.example.wordcounter.R
 import com.example.wordcounter.domain.TextStatistics
 import com.example.wordcounter.ui.theme.WordCounterTheme
+
+/**
+ * Stabilūs semantiniai testų žymekliai (test tags) Compose UI testavimui.
+ */
+object WordCounterTestTags {
+    const val LAZY_COLUMN = "WordCounter:LazyColumn"
+    const val RESULTS_CARD = "WordCounter:ResultsCard"
+    const val METRIC_ITEM_PREFIX = "WordCounter:Metric:"
+    const val HISTORY_CARD = "WordCounter:HistoryCard"
+}
 
 /**
  * Pagrindinis „WordCounter“ naudotojo sąsajos ekranas, susietas su [WordCounterViewModel].
@@ -98,7 +109,8 @@ fun WordCounterContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .imePadding(),
+                .imePadding()
+                .testTag(WordCounterTestTags.LAZY_COLUMN),
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
@@ -160,11 +172,14 @@ fun WordCounterContent(
                     )
                 }
             } else {
-                items(
+                itemsIndexed(
                     items = uiState.history,
-                    key = { it.id }
-                ) { historyItem ->
-                    HistoryCard(item = historyItem)
+                    key = { _, item -> item.id }
+                ) { index, historyItem ->
+                    HistoryCard(
+                        item = historyItem,
+                        modifier = Modifier.testTag("${WordCounterTestTags.HISTORY_CARD}:$index")
+                    )
                 }
             }
         }
@@ -231,7 +246,9 @@ private fun ResultsCard(
     modifier: Modifier = Modifier
 ) {
     ElevatedCard(
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier
+            .fillMaxWidth()
+            .testTag(WordCounterTestTags.RESULTS_CARD)
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
@@ -291,7 +308,9 @@ private fun MetricItem(
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier.padding(horizontal = 4.dp),
+        modifier = modifier
+            .padding(horizontal = 4.dp)
+            .testTag("${WordCounterTestTags.METRIC_ITEM_PREFIX}$label"),
         horizontalAlignment = Alignment.Start
     ) {
         Text(
@@ -381,7 +400,7 @@ private fun HistoryCard(
     device = "spec:width=411dp,height=891dp"
 )
 @Composable
-private fun WordCounterScreenPortraitPreview() {
+internal fun WordCounterScreenPortraitPreview() {
     WordCounterTheme(dynamicColor = false) {
         WordCounterContent(
             uiState = WordCounterUiState(
@@ -417,7 +436,7 @@ private fun WordCounterScreenPortraitPreview() {
     device = "spec:width=891dp,height=411dp,orientation=landscape"
 )
 @Composable
-private fun WordCounterScreenLandscapePreview() {
+internal fun WordCounterScreenLandscapePreview() {
     WordCounterTheme(dynamicColor = false) {
         WordCounterContent(
             uiState = WordCounterUiState(
@@ -452,7 +471,7 @@ private fun WordCounterScreenLandscapePreview() {
     showBackground = true
 )
 @Composable
-private fun WordCounterScreenErrorPreview() {
+internal fun WordCounterScreenErrorPreview() {
     WordCounterTheme(dynamicColor = false) {
         WordCounterContent(
             uiState = WordCounterUiState(
